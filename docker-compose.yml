@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: latest
+    container_name: wkblog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wkblog
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d wkblog"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: wkblog-app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DATABASE_URL=postgresql://root:123456@postgres:5432/wkblog
+  #     - NEXTAUTH_URL=http://localhost:3000
+  #     - NEXTAUTH_SECRET=your-super-secret-nextauth-secret-change-this-in-production
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./prisma:/app/prisma:ro
+  #   command: >
+  #     sh -c "
+  #       npx prisma migrate deploy &&
+  #       node server.js
+  #     "
+
+volumes:
+  postgres_data:
+    driver: local

@@ -15,6 +15,8 @@ interface DialogBaseProps {
   trigger: ReactNode;
   title: string;
   description?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function DialogBase({
@@ -23,9 +25,11 @@ export default function DialogBase({
   trigger,
   title,
   description,
+  open,
+  onOpenChange,
 }: DialogBaseProps) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger>{trigger}</DialogTrigger>
       <DialogContent className={cn(contentClassName)}>
         <DialogHeader>
